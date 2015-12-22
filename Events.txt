@@ -1,0 +1,7 @@
+# This is a long format
+1-2
+2:25 pm, Bob flies out on DL 2229
+5:15 pm, Fly out on UA 1699
+
+# This is a short format
+1-3, 5:30 pm, Meet Fred at The Boiling Crab.
