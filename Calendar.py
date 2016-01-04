@@ -18,7 +18,7 @@ def renderDate(month, year, curDate, events):
 
       if '-' in s:
         s = s.split("-")[0].strip()
-      s = re.sub("am|pm| ", "", s, re.IGNORECASE).strip()
+      s = re.sub("am|pm| ", "", s, 0, re.IGNORECASE).strip()
 
       if am: retVal = 0
       else: retVal = 10000000 # Make PM much higher
