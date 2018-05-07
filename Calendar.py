@@ -102,7 +102,7 @@ if numDaysRemaining > 28: # Number of days we can store in the rest of the calen
     for i in xrange(numSpillOver):
         body += renderDate(month,  year, curDate, events)
         curDate += 1
-       
+
 # Add blank days
 for i in xrange(numBlankFromSunday):
    body += "\\BlankDay\n"

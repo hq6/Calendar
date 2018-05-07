@@ -1,7 +1,14 @@
 # This is a long format
-1-2
-2:25 pm, Bob flies out on DL 2229
-5:15 pm, Fly out on UA 1699
+# 1-2
+# 2:25 pm, Bob flies out on DL 2229
+# 5:15 pm, Fly out on UA 1699
 
 # This is a short format
-1-3, 5:30 pm, Meet Fred at The Boiling Crab.
+# 1-3, 5:30 pm, Meet Fred at The Boiling Crab.
+5-4, 6 pm, Dinner at To Bang
+5-5, 11 am, Visit Some Vineyard for Anniversary Celebration
+5-5, 8:30 pm, Watch Avengers at Shoreline.
+5-6, Noon, Lunch at Chili Pot
+6-7, All Day, Stanford PlatformLab Retreat
+6-8, 8:55 am, Fly to San Diego
+6-13, 8:55 am, Return from san Diego
