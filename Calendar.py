@@ -42,6 +42,7 @@ def renderDate(month, year, curDate, events):
    day.sort(cmp=DSSorter)
    b = "\\day{}{"
    for x in day:
+      x = [e.strip() for e in x]
       if x[0] == "NULL":
          b+= "%s \\\\" % x[1] 
       else:
