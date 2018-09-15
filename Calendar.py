@@ -9,6 +9,7 @@ def renderDate(month, year, curDate, events):
    if not events or not events[(month, curDate, year)]: 
       return "\\day{}{\\vspace{2.5cm}} %% %d\n" % curDate
    def getStartTime(s):
+      if s == 'Noon': s = "12 pm"
       # Find am / pm string
       # default to pm
       am = False
@@ -26,7 +27,7 @@ def renderDate(month, year, curDate, events):
          s = s.split(":")
          return retVal + (int(s[0]) % 12) * 60 + int(s[1])
       return retVal + (int(s[0]) % 12) * 60 
-        
+
    def DSSorter(x,y):
       if x[0] == 'NULL': return -1
       if y[0] == 'NULL': return 1
