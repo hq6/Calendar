@@ -1,0 +1,4 @@
+A new goal is to make this into a general purpose text calendar that can output to Google Calendar and HTML formats for more convenient use.
+
+https://stackoverflow.com/questions/2803852/python-date-string-to-date-object
+
