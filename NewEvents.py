@@ -2,6 +2,7 @@ import datetime
 import sys
 import re
 from functools import total_ordering
+import calendar
 
 # Represent a single event on a calendar
 @total_ordering
@@ -44,6 +45,15 @@ class Event:
     if other.startTime == None or other.startTime == "All Day":
       return False
     return self.startTime < other.startTime
+
+def getDates(from_date, to_date, day_list):
+    date_list = list()
+    ## Creates a list of all the dates falling between the from_date and to_date range
+    for x in xrange((to_date - from_date).days+1):
+        date_record = from_date + datetime.timedelta(days=x)
+        if date_record.weekday() in day_list:
+            date_list.append(date_record)
+    return date_list
 
 def parseDate(ds):
    parts = ds.split("-")
@@ -97,6 +107,20 @@ def readEvent(line):
    startTime, endTime = parseTime(parts[1])
    return Event(date, startTime, endTime, parts[2])
 
+def generateRecurring(line):
+    def convertToNumber(dayNameOrAbbr):
+        try:
+          num = list(calendar.day_name).index(dayNameOrAbbr)
+        except:
+          num = list(calendar.day_abbr).index(dayNameOrAbbr)
+        return num
+    parts = line.split(",", 4)
+    startDate = parseDate("1-1") if parts[1] == "NULL" else parseDate(parts[1])
+    endDate = parseDate("12-31")  if parts[2] == "NULL" else parseDate(parts[2])
+    days = getDates(startDate, endDate, [convertToNumber(parts[0])])
+    startTime, endTime = parseTime(parts[3])
+    return [Event(x, startTime, endTime, parts[4]) for x in days]
+
 # Expected format:
 # Date: MM-DD-YYYY || MM-DD
 # StartTime: Noon || All Day || hh:mm (am|pm)?
@@ -118,7 +142,7 @@ def readEvents(events_file):
       elif re.search(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)", line):
         recurringEvents = generateRecurring(line)
         for e in recurringEvents:
-            events[e[0]].append(e[1])
+            events.append(e)
       # Continuation of long form is assumed if long form already started.
       # Otherwise we ignore.
       elif curDate:
