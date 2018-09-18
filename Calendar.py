@@ -26,29 +26,9 @@ def renderDate(month, year, day, events):
    out+= "} %% %d\n" % day
    return out
 
-
-def main():
-    # Default arguments
-    now = datetime.now()
-    month = now.month
-    year = now.year
-    eventsFile = "Events.txt"
-
-    # Read argument
-    num_args = len(sys.argv)
-    if num_args > 1: month = int(sys.argv[1])
-    if num_args > 2: year = int(sys.argv[2])
-    if num_args > 3: eventsFile = sys.argv[3]
-
+def createLatexCalendar(events, month, year):
     # Convert  to get month name
     month_name = calendar.month_name[month]
-
-    # Read events
-    try:
-        events = NewEvents.readEvents(eventsFile)
-    except: # Blank map if Events does not exist
-        events = None
-    print events
 
     # start by generating the correct calendar for any month and year
     prefix = open("Prefix.tex").read();
@@ -113,5 +93,27 @@ def main():
 
     # Open it
     os.system("evince %s &" % PDF_FILE)
+
+
+def main():
+    # Default arguments
+    now = datetime.now()
+    month = now.month
+    year = now.year
+    eventsFile = "Events.txt"
+
+    # Read argument
+    num_args = len(sys.argv)
+    if num_args > 1: month = int(sys.argv[1])
+    if num_args > 2: year = int(sys.argv[2])
+    if num_args > 3: eventsFile = sys.argv[3]
+
+    # Read events
+    try:
+        events = NewEvents.readEvents(eventsFile)
+    except:
+        events = None
+
+    createLatexCalendar(events, month, year)
 
 if __name__ == "__main__": main()
