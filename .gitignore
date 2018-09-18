@@ -1,2 +1,5 @@
-Events.pyc
+# Compiled python files
+*.pyc
+
+# Output directory
 out
