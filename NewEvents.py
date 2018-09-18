@@ -1,8 +1,10 @@
 import datetime
 import sys
 import re
+from functools import total_ordering
 
 # Represent a single event on a calendar
+@total_ordering
 class Event:
   # The inputs are of the following types, although endTIme is allowed to be None.
   # datetime.date date
@@ -19,6 +21,18 @@ class Event:
     return ",".join([str(self.date), str(self.startTime), str(self.endTime), str(self.description)])
 
   __repr__ = __str__
+
+  def __eq__(self, other):
+    return self__dict__ == other.__dict__
+
+  def __lt__(self, other):
+    if self.date != other.date:
+      return self.date < other.date
+    if self.startTime == None or self.startTime == "All Day":
+      return True
+    if other.startTime == None or other.startTime == "All Day":
+      return False
+    return self.startTime < other.startTime
 
 def parseDate(ds):
    parts = ds.split("-")
@@ -41,7 +55,7 @@ def parseTime(ts):
      if ts == "Noon":
        return datetime.time(12, 0)
      if ts == "NULL":
-       return "NULL"
+       return None
 
      amOrPm = re.search("am|pm", ts, re.IGNORECASE)
      ts = re.sub("am|pm| ", "", ts, 0, re.IGNORECASE).strip()
@@ -104,6 +118,6 @@ def readEvents(events_file):
 
 def main():
     events_file = "Events.txt"
-    print "\n".join(str(x) for x in readEvents(events_file))
+    print "\n".join(str(x) for x in sorted(readEvents(events_file)))
 
 if __name__ == "__main__": main()
