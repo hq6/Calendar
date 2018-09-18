@@ -17,6 +17,17 @@ class Event:
     self.endTime = endTime
     self.description = description
 
+  # Return a textual description of the start and optionally end time.
+  def getTimeString(self):
+    if not self.startTime:
+       return None
+    if self.startTime == "All Day":
+       return self.startTime
+    startString = self.startTime.strftime("%I:%M %p")
+    if self.endTime:
+      return "-".join([startString, self.endTime.strftime("%I:%M %p")])
+    return startString
+
   def __str__(self):
     return ",".join([str(self.date), str(self.startTime), str(self.endTime), str(self.description)])
 

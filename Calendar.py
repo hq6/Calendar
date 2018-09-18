@@ -1,55 +1,30 @@
 #!/usr/bin/python
 
-import sys,  calendar, os
-from datetime import datetime
+import sys, calendar, os
+from datetime import datetime, date
 import re
-import Events
+import NewEvents
 
-def renderDate(month, year, curDate, events):
-   if not events or not events[(month, curDate, year)]:
-      return "\\day{}{\\vspace{2.5cm}} %% %d\n" % curDate
-   def getStartTime(s):
-      if s == 'Noon': s = "12 pm"
-      # Find am / pm string
-      # default to pm
-      am = False
-      match = re.search("am|pm", s, re.IGNORECASE)
-      if match and match.group(0).lower() == 'am':
-          am = True
+def renderDate(month, year, day, events):
+   if not events:
+      return "\\day{}{\\vspace{2.5cm}} %% %d\n" % day
 
-      if '-' in s:
-        s = s.split("-")[0].strip()
-      s = re.sub("am|pm| ", "", s, 0, re.IGNORECASE).strip()
-
-      if am: retVal = 0
-      else: retVal = 10000000 # Make PM much higher
-      if ':' in s:
-         s = s.split(":")
-         return retVal + (int(s[0]) % 12) * 60 + int(s[1])
-      return retVal + (int(s[0]) % 12) * 60
-
-   def DSSorter(x,y):
-      if x[0] == 'NULL': return -1
-      if y[0] == 'NULL': return 1
-      xTime = getStartTime(x[0])
-      yTime = getStartTime(y[0])
-      return xTime - yTime
+   # Extract the events on a given day
+   dayEvents = filter(lambda x: x.date == date(year, month, day), events)
+   if not dayEvents:
+      return "\\day{}{\\vspace{2.5cm}} %% %d\n" % day
 
    def cleanForLatex(x):
       return re.sub(r"((?<!\\)[#\$%\^&_\{\}~])", r"\\\1", x)
 
-
-   day = events[(month, curDate, year)]
-   day.sort(cmp=DSSorter)
-   b = "\\day{}{"
-   for x in day:
-      x = [e.strip() for e in x]
-      if x[0] == "NULL":
-         b+= "%s \\\\" % x[1]
+   out = "\\day{}{"
+   for event in dayEvents:
+      if event.startTime == None:
+         out+= "%s \\\\" % event.description
       else:
-         b+= "%s \\daysep %s \\\\" % (x[0], cleanForLatex(x[1]))
-   b+= "} %% %d\n" % curDate
-   return b
+         out+= "%s \\daysep %s \\\\" % (event.getTimeString(), cleanForLatex(event.description))
+   out+= "} %% %d\n" % day
+   return out
 
 
 def main():
@@ -70,7 +45,7 @@ def main():
 
     # Read events
     try:
-        events = Events.readEvents(eventsFile)
+        events = NewEvents.readEvents(eventsFile)
     except: # Blank map if Events does not exist
         events = None
     print events
