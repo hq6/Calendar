@@ -31,8 +31,8 @@ def createLatexCalendar(events, month, year):
     month_name = calendar.month_name[month]
 
     # start by generating the correct calendar for any month and year
-    prefix = open("Prefix.tex").read();
-    suffix = open("Suffix.tex").read();
+    prefix = open("res/Prefix.tex").read();
+    suffix = open("res/Suffix.tex").read();
     prefix = prefix.replace("MONTH", month_name).replace("YEAR", str(year))
 
     # Calculate the number of blank days from Sunday
