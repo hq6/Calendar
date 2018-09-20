@@ -4,30 +4,30 @@ import sys, calendar, os
 from datetime import datetime, date
 import re
 import NewEvents
-
-def renderDate(month, year, day, events):
-   if not events:
-      return "\\day{}{\\vspace{2.5cm}} %% %d\n" % day
-
-   # Extract the events on a given day
-   dayEvents = filter(lambda x: x.date == date(year, month, day), events)
-   if not dayEvents:
-      return "\\day{}{\\vspace{2.5cm}} %% %d\n" % day
-
-   def cleanForLatex(x):
-      return re.sub(r"((?<!\\)[#\$%\^&_\{\}~])", r"\\\1", x)
-
-   out = "\\day{}{"
-   for event in dayEvents:
-      if event.startTime == None:
-         out+= "%s \\\\" % event.description
-      else:
-         out+= "%s \\daysep %s \\\\" % (event.getTimeString(), cleanForLatex(event.description))
-   out+= "} %% %d\n" % day
-   return out
+from xml.sax.saxutils import escape, unescape
 
 def createLatexCalendar(events, month, year):
-    # Convert  to get month name
+    def renderDate(month, year, day, events):
+       if not events:
+          return "\\day{}{\\vspace{2.5cm}} %% %d\n" % day
+
+       # Extract the events on a given day
+       dayEvents = filter(lambda x: x.date == date(year, month, day), events)
+       if not dayEvents:
+          return "\\day{}{\\vspace{2.5cm}} %% %d\n" % day
+
+       def cleanForLatex(x):
+          return re.sub(r"((?<!\\)[#\$%\^&_\{\}~])", r"\\\1", x)
+
+       out = "\\day{}{"
+       for event in dayEvents:
+          if event.startTime == None:
+             out+= "%s \\\\" % event.description
+          else:
+             out+= "%s \\daysep %s \\\\" % (event.getTimeString(), cleanForLatex(event.description))
+       out+= "} %% %d\n" % day
+       return out
+    # Convert to get month name
     month_name = calendar.month_name[month]
 
     # start by generating the correct calendar for any month and year
@@ -94,6 +94,71 @@ def createLatexCalendar(events, month, year):
     # Open it
     os.system("evince %s &" % PDF_FILE)
 
+def createHTMLCalendar(events, month, year):
+    def renderDate(month, year, day, events):
+       if not events:
+          return '<td><div class="dayOfMonth">%d</div></td>' % day
+
+       # Extract the events on a given day
+       dayEvents = filter(lambda x: x.date == date(year, month, day), events)
+       if not dayEvents:
+          return '<td><div class="dayOfMonth">%d</div></td>' % day
+
+       def escapeHTMLEntity(x):
+          return escape(x)
+
+       out = '<td><div class="dayOfMonth">%d</div><div class="dayContents">' % day
+       for event in dayEvents:
+          if event.startTime == None:
+             out+= "<span>%s</span><br />\n" % event.description
+          else:
+              out+= "<span style='text-decoration: underline'>%s</span><br />\n<span>%s</span><br />\n" % \
+                  (event.getTimeString(), escapeHTMLEntity(event.description))
+       out+= "</div></td>"
+       return out
+    # Convert to get month name
+    month_name = calendar.month_name[month]
+
+    prefix = open("res/Prefix.html").read();
+    suffix = "</table></html>"
+    prefix = prefix.replace("MONTH", month_name).replace("YEAR", str(year))
+
+    # Calculate the number of blank days from Sunday
+    firstOfMonth = datetime(year, month, 1)
+    numBlankFromSunday = firstOfMonth.isoweekday() % 7
+
+    # Handle any spillover days by putting them on the left of the first row
+    numDaysInMonth = calendar.monthrange(year,month)[1]
+
+    # Start building the body
+    body = "<tr>\n"
+    dayCounter = 0
+
+    # Add blank days
+    for i in xrange(numBlankFromSunday):
+       body += "<td><div class='dayContents'></div></td>\n"
+       dayCounter += 1
+
+    # Add the actual days
+    for i in xrange(numDaysInMonth):
+        body += renderDate(month,  year, i + 1, events)
+        dayCounter += 1
+        if dayCounter % 7 == 0:
+            body += "</tr>\n"
+            body += "<tr>\n"
+
+    # Create directory if it does not exist
+    try:
+        os.mkdir("out");
+    except:
+        pass
+
+    HTML_FILE = "out/%s.html" % month_name
+
+    with open(HTML_FILE, "w") as f:
+      f.write(prefix)
+      f.write(body)
+      f.write(suffix)
 
 def main():
     # Default arguments
@@ -115,5 +180,6 @@ def main():
         events = None
 
     createLatexCalendar(events, month, year)
+    createHTMLCalendar(events, month, year)
 
 if __name__ == "__main__": main()
