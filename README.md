@@ -1,4 +1,4 @@
-## Henry's Calendar
+## Ascii Calendar to PDF and HTML
 
 This is a simple tool for generating a pdf calendar from a lightweight
 text-based format.
