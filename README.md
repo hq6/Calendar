@@ -1,11 +1,9 @@
 ## Henry's Calendar
 
 This is a simple tool for generating a pdf calendar from a lightweight
-text-based format. The code quality is not great, but it was hacked together in
-a couple of hours, and is sufficient for its current purpose.
+text-based format.
 
-
-In order to use it, one must edit the `Events.txt` file and run `make` to
+In order to use it, one edits the `Events.txt` file and run `make` to
 generate the calendar for the current month of the current year.
 
     vim Events.txt
