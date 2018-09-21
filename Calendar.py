@@ -3,7 +3,7 @@
 import sys, calendar, os
 from datetime import datetime, date
 import re
-import NewEvents
+import Events
 from xml.sax.saxutils import escape, unescape
 
 def createLatexCalendar(events, month, year):
@@ -175,7 +175,7 @@ def main():
 
     # Read events
     try:
-        events = NewEvents.readEvents(eventsFile)
+        events = Events.readEvents(eventsFile)
     except:
         events = None
 
