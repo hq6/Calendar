@@ -35,7 +35,7 @@ class Event:
   __repr__ = __str__
 
   def __eq__(self, other):
-    return self__dict__ == other.__dict__
+    return self.__dict__ == other.__dict__
 
   def __lt__(self, other):
     if self.date != other.date:
@@ -127,12 +127,16 @@ def generateRecurring(line):
 # EndTime: Noon || All Day || hh:mm (am|pm)?
 def readEvents(events_file):
     events = list()
+    eventsToDelete = list()
     curDate = None
     with open(events_file) as f:
      for line in f:
       # Comments are Python style
       line = line.strip()
       if line == "" or line.startswith("#"): continue
+      # Event negation requires short form
+      if line.startswith("!"):
+        eventsToDelete.append(readEvent(line[1:]))
       if re.match(r"^\d\d?-\d\d?(-\d{4}|\d{2})?$", line): # Long form start
         curDate = parseDate(line)
       elif re.search(r"^\d\d?-\d\d?(-\d{4}|\d{2})?", line): # Short form supercedes long form
@@ -149,6 +153,9 @@ def readEvents(events_file):
         parts = line.split(",", 1)
         events[curDate].append(parts)
 
+    print events
+    events = filter(lambda x: x not in eventsToDelete, events)
+    print events
     return events
 
 def main():
