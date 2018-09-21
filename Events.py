@@ -153,9 +153,7 @@ def readEvents(events_file):
         parts = line.split(",", 1)
         events[curDate].append(parts)
 
-    print events
     events = filter(lambda x: x not in eventsToDelete, events)
-    print events
     return events
 
 def main():
